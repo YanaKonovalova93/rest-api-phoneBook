@@ -1,14 +1,3 @@
-
-// import fs from 'fs/promises'
-
-// const listContacts = async () => {}
-
-// const getContactById = async (contactId) => {}
-
-// const removeContact = async (contactId) => {}
-
-// const addContact = async (body) => {}
-
 import fs from "fs/promises";
 import path from "path";
 import { nanoid } from "nanoid";
@@ -59,10 +48,10 @@ export const updateContact = async (id, data) => {
   if (index === -1) {
     return null;
   }
-  contacts[index] = {id, ...data};
+  contacts[index] = { id, ...data };
   await updateContacts(contacts);
   return contacts[index];
-}
+};
 
 export default {
   listContacts,
@@ -70,4 +59,4 @@ export default {
   removeContact,
   addContact,
   updateContact,
-}
+};
