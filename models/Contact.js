@@ -33,7 +33,7 @@ const Contact = model("contact", contactSchema);
 
 export const contactAddSchema = Joi.object({
   name: Joi.string().required().messages({
-    "any.required": `missing required "name"`,
+    "any.required": `mis required "name"`,
   }),
   email: Joi.string(),
   phone: Joi.string(),

@@ -8,8 +8,9 @@ import {validateBody} from "../../decorators/index.js";
 
 
 const authRouter = express.Router();
-const userSignupValidate = validateBody(userSchema.userSignupSchema)
+const userRegisterValidate = validateBody(userSchema.userRegisterSchema)
 
-authRouter.post("/signup", userSignupValidate, authController.signup);
+authRouter.post("/register", userRegisterValidate, authController.register);
+authRouter.
 
 export default authRouter;
