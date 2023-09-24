@@ -5,7 +5,7 @@ import cors from "cors";
 import "dotenv/config";
 
 import contactsRouter from "./routes/api/contacts.js";
-import authRouter from "./routes/api/auth-router.js"
+import authRouter from "./routes/api/auth-router.js";
 
 const app = express();
 
@@ -26,7 +26,5 @@ app.use((err, req, res, next) => {
   const { status = 500, message = "Server error" } = err;
   res.status(status).json({ message });
 });
-
-
 
 export default app;

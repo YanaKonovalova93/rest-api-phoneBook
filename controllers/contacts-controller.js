@@ -5,13 +5,22 @@ import { ctrlWrapper } from "../decorators/index.js";
 import Contact from "../models/Contact.js";
 
 const getAll = async (req, res) => {
-  const result = await Contact.find();
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 20 } = req.query;
+  const skip = (page - 1) * limit;
+  const result = await Contact.find({ owner }, "-createdAt -updatedAt", {
+    skip,
+    limit,
+  }).populate("owner", "email subscription");
   res.status(200).json(result);
 };
 
 const getById = async (req, res) => {
   const { id } = req.params;
   const result = await Contact.findById(id);
+
+  // const {_id: owner} = req.user;
+  // const result = await Contact.findOne({_id: id, owner})
   if (!result) {
     throw HttpError(404, "This contact not found");
   }
@@ -38,7 +47,8 @@ const updateStatusContact = async (req, res) => {
 };
 
 const add = async (req, res) => {
-  const result = await Contact.create(req.body);
+  const { _id: owner } = req.user;
+  const result = await Contact.create({ ...req.body, owner });
   res.status(201).json(result);
 };
 
