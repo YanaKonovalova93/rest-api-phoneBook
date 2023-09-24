@@ -17,6 +17,8 @@ contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsController.getAll);
 
+
+
 contactsRouter.get("/:id", isValidId, contactsController.getById);
 
 contactsRouter.post("/", contactAddValidate, contactsController.add);
@@ -36,5 +38,7 @@ contactsRouter.patch(
 );
 
 contactsRouter.delete("/:id", isValidId, contactsController.deleteById);
+
+
 
 export default contactsRouter;

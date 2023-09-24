@@ -18,10 +18,10 @@ const register = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({ ...req.body, password: hashPassword });
-  res.status(201).json({
+  res.status(201).json({user: {
     password: newUser.password,
     email: newUser.email,
-  });
+  }});
 };
 
 const login = async (req, res) => {
@@ -46,6 +46,10 @@ const login = async (req, res) => {
 
   res.json({
     token,
+    user: {
+      password: user.password,
+      email: user.email,
+    },
   });
 };
 
@@ -67,16 +71,17 @@ const logout = async (req, res) => {
   });
 };
 
+const subscriptionUpdate = async (req, res) => {
+const {_id} = req.user;
+const result = await User.findByIdAndUpdate(_id, req.body, { new: true })
+res.json(result);
+}
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
+  subscriptionUpdate: ctrlWrapper(subscriptionUpdate),
 };
 
-// const decodeToken = jwt.decode(token);
-
-// user: {
-//   password: user.password,
-//   email: user.email,
-// },

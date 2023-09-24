@@ -5,14 +5,21 @@ import { ctrlWrapper } from "../decorators/index.js";
 import Contact from "../models/Contact.js";
 
 const getAll = async (req, res) => {
-  const { _id: owner } = req.user;
-  const { page = 1, limit = 20 } = req.query;
-  const skip = (page - 1) * limit;
-  const result = await Contact.find({ owner }, "-createdAt -updatedAt", {
-    skip,
-    limit,
-  }).populate("owner", "email subscription");
-  res.status(200).json(result);
+  if (req.query.favorite) {
+    let result = await Contact.find({
+      favorite: req.query.favorite,
+    }).exec();
+    return res.json(result);
+  } else {
+    const { _id: owner } = req.user;
+    const { page = 1, limit = 20 } = req.query;
+    const skip = (page - 1) * limit;
+    const result = await Contact.find({ owner }, "-createdAt -updatedAt", {
+      skip,
+      limit,
+    }).populate("owner", "email subscription");
+    res.status(200).json(result);
+  }
 };
 
 const getById = async (req, res) => {
