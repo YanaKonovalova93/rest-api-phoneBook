@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 
 import { HttpError } from "../helpers/index.js";
 
-import { ctrlWrapper } from "../decorators/index.js";
+import { ctrlWrapper, changeSize } from "../decorators/index.js";
 
 const { JWT_SECRET } = process.env;
 
@@ -34,7 +34,7 @@ const register = async (req, res) => {
     user: {
       password: newUser.password,
       email: newUser.email,
-      avatar: newUser.avatar,
+      avatar: newUser.avatar
     },
   });
 };
@@ -43,7 +43,10 @@ const avatarUpdate = async (req, res) => {
   const { path: oldPath, filename } = req.file;
   const newPath = path.join(avatarsPath, filename);
   await fs.rename(oldPath, newPath);
+  await changeSize(newPath, 250, 250);
+
   const avatar = path.join("avatars", filename);
+
   const newAvatar = { ...req.body, avatar };
   const result = await User.findByIdAndUpdate(_id, newAvatar, { new: true });
   res.json(result);
