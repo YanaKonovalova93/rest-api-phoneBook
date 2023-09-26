@@ -34,7 +34,7 @@ const register = async (req, res) => {
     user: {
       password: newUser.password,
       email: newUser.email,
-      avatar: newUser.avatar
+      avatar: newUser.avatar,
     },
   });
 };
