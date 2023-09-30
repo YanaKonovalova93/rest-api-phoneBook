@@ -5,7 +5,7 @@ import contactsController from "../../controllers/contacts-controller.js";
 import * as contactSchema from "../../models/Contact.js";
 import { validateBody } from "../../decorators/index.js";
 
-import { authenticate, isValidId } from "../../middlewares/index.js";
+import { authenticate, isValidId} from "../../middlewares/index.js";
 
 const contactAddValidate = validateBody(contactSchema.contactAddSchema);
 const contactUpdateFavoriteValidate = validateBody(
@@ -20,6 +20,7 @@ contactsRouter.get("/", contactsController.getAll);
 
 
 contactsRouter.get("/:id", isValidId, contactsController.getById);
+
 
 contactsRouter.post("/", contactAddValidate, contactsController.add);
 
@@ -38,7 +39,5 @@ contactsRouter.patch(
 );
 
 contactsRouter.delete("/:id", isValidId, contactsController.deleteById);
-
-
 
 export default contactsRouter;

@@ -1,12 +1,18 @@
+import fs from "fs/promises";
+import path from "path";
+import gravatar from "gravatar";
+
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import { HttpError } from "../helpers/index.js";
 
-import { ctrlWrapper } from "../decorators/index.js";
+import { ctrlWrapper, changeSize } from "../decorators/index.js";
 
 const { JWT_SECRET } = process.env;
+
+const avatarsPath = path.resolve("public", "avatars");
 
 const register = async (req, res) => {
   const { email, password } = req.body;
@@ -17,11 +23,33 @@ const register = async (req, res) => {
   }
   const hashPassword = await bcrypt.hash(password, 10);
 
-  const newUser = await User.create({ ...req.body, password: hashPassword });
-  res.status(201).json({user: {
-    password: newUser.password,
-    email: newUser.email,
-  }});
+  const avatarURL = gravatar.url(email, { s: "250" });
+
+  const newUser = await User.create({
+    ...req.body,
+    avatar: avatarURL,
+    password: hashPassword,
+  });
+  res.status(201).json({
+    user: {
+      password: newUser.password,
+      email: newUser.email,
+      avatar: newUser.avatar,
+    },
+  });
+};
+const avatarUpdate = async (req, res) => {
+  const { _id } = req.user;
+  const { path: oldPath, filename } = req.file;
+  const newPath = path.join(avatarsPath, filename);
+  await fs.rename(oldPath, newPath);
+  await changeSize(newPath, 250, 250);
+
+  const avatar = path.join("avatars", filename);
+
+  const newAvatar = { ...req.body, avatar };
+  const result = await User.findByIdAndUpdate(_id, newAvatar, { new: true });
+  res.json(result);
 };
 
 const login = async (req, res) => {
@@ -72,10 +100,10 @@ const logout = async (req, res) => {
 };
 
 const subscriptionUpdate = async (req, res) => {
-const {_id} = req.user;
-const result = await User.findByIdAndUpdate(_id, req.body, { new: true })
-res.json(result);
-}
+  const { _id } = req.user;
+  const result = await User.findByIdAndUpdate(_id, req.body, { new: true });
+  res.json(result);
+};
 
 export default {
   register: ctrlWrapper(register),
@@ -83,5 +111,5 @@ export default {
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
   subscriptionUpdate: ctrlWrapper(subscriptionUpdate),
+  avatarUpdate: ctrlWrapper(avatarUpdate),
 };
-
