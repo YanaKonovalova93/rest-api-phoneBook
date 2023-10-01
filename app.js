@@ -29,5 +29,33 @@ app.use((err, req, res, next) => {
 });
 
 
+import nodemailer from "nodemailer";
+// import "dotenv/config";
+
+const {UKR_NET_FROM, UKR_NET_PASSWORD} = process.env;
+
+const nodemailerConfig = {
+    host: "smtp.ukr.net",
+    port: "465",
+    secure: true, 
+    auth: {
+        user: UKR_NET_FROM,
+        pass: UKR_NET_PASSWORD,
+    }
+}
+
+const transport = nodemailer.createTransport(nodemailerConfig);
+
+const email = {
+    from: UKR_NET_FROM,
+    to: "padogi6753@fesgrid.com",
+    subject:"Test email",
+    html: "Test email",
+}
+
+transport.sendMail(email)
+.then(()=> console.log("email send"))
+.catch(error=> console.log(error.message));
+
 
 export default app;
