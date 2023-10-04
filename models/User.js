@@ -27,14 +27,25 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    token: String,
+    token: {
+      type: String,
+    },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, "Verify token is required"],
+    },
   },
+
   { versionKey: false, timestamps: true }
 );
 
 userSchema.post("save", handleSaveError);
 
-userSchema.pre("findOneAndUpdate", runValidateUpdate);
+userSchema.pre("updateOne", runValidateUpdate);
 
 userSchema.post("findOneAndUpdate", handleSaveError);
 
@@ -43,6 +54,10 @@ const User = model("user", userSchema);
 export const userRegisterSchema = Joi.object({
   email: Joi.string().pattern(emailRegex).required(),
   password: Joi.string().min(6).required(),
+});
+
+export const userEmailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegex).required(),
 });
 
 export const userLoginSchema = Joi.object({
